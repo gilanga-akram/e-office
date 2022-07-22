@@ -23,6 +23,21 @@ module.exports = {
       isi: {
         type: Sequelize.TEXT
       },
+      status: {
+        type: Sequelize.STRING
+      },
+      tipe: {
+        type: Sequelize.STRING
+      },
+      jenis: {
+        type: Sequelize.STRING
+      },
+      tujuan: {
+        type: Sequelize.STRING
+      },
+      waktu_pengiriman: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

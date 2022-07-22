@@ -10,15 +10,15 @@ class UserController {
 	static async loginUser(req, res, next) {
 		try {
 			const { username, password } = req.body;
-      if (!username || !password) throw createError(StatusCodes.BAD_REQUEST, "Wrong Username / Password");
-      const userValidation = await user.findOne({ where: { username } });
-      if (!userValidation) throw createError(StatusCodes.BAD_REQUEST, "Wrong Username / Password");
-      if (!comparePassword(password, userValidation.password)) throw createError(StatusCodes.BAD_REQUEST, "Wrong Username / Password");
-      let result = {
-        access_token: generateToken({ id: userValidation.id, role: userValidation.role }),
-        user_data: userValidation,
-      };
-      res.status(200).json(result);
+			if (!username || !password) throw createError(StatusCodes.BAD_REQUEST, "Wrong Username / Password");
+			const userValidation = await user.findOne({ where: { username } });
+			if (!userValidation) throw createError(StatusCodes.BAD_REQUEST, "Wrong Username / Password");
+			if (!comparePassword(password, userValidation.password)) throw createError(StatusCodes.BAD_REQUEST, "Wrong Username / Password");
+			let result = {
+				access_token: generateToken({ id: userValidation.id, role: userValidation.role, bagian: userValidation.bagian }),
+				user_data: userValidation,
+			};
+			res.status(StatusCodes.OK).json(result);
 		} catch (err) {
 			next(err);
 		}
@@ -29,17 +29,17 @@ class UserController {
 				throw createError(StatusCodes.UNAUTHORIZED, 'must be an admin');
 			}
 			const { username, nama, bagian } = req.body;
-      if (!username || !nama || !bagian) throw createError(StatusCodes.BAD_REQUEST, "Fill in all required fields");
-      const userValidation = await user.findOne({ where: { username } });
-      if (userValidation) throw createError(StatusCodes.BAD_REQUEST, "Username Already Taken");
-      await user.create({
+			if (!username || !nama || !bagian) throw createError(StatusCodes.BAD_REQUEST, "Fill in all required fields");
+			const userValidation = await user.findOne({ where: { username } });
+			if (userValidation) throw createError(StatusCodes.BAD_REQUEST, "Username Already Taken");
+			await user.create({
 				nama: nama,
 				username: username,
 				password: hashPassword('123456'),
 				bagian: bagian,
 				role: 'user',
 			});
-      res.status(200).json({ msg: 'Success' });
+			res.status(StatusCodes.CREATED).json({ msg: 'Success' });
 		} catch (err) {
 			next(err);
 		}
@@ -49,12 +49,12 @@ class UserController {
 			if (req.UserData.role !== 'admin') {
 				throw createError(StatusCodes.UNAUTHORIZED, 'must be an admin');
 			}
-      const userData = await user.findAll({
+    		const userData = await user.findAll({
 				where: {
 					role: 'user'
 				}
 			});
-      res.status(200).json({
+      		res.status(StatusCodes.OK).json({
 				data: userData,
 			});
 		} catch (err) {
@@ -66,7 +66,7 @@ class UserController {
 			if (req.UserData.role !== 'admin') {
 				throw createError(StatusCodes.UNAUTHORIZED, 'must be an admin');
 			}
-      const userData = await user.findOne({
+      		const userData = await user.findOne({
 				where: {
 					id: req.params.id,
 				},
@@ -80,7 +80,7 @@ class UserController {
 					id: userData.id,
 				},
 			});
-      res.status(200).json({
+      		res.status(StatusCodes.OK).json({
 				msg: 'Success',
 			});
 		} catch (err) {
@@ -93,7 +93,7 @@ class UserController {
 			if (req.UserData.role !== 'admin') {
 				throw createError(StatusCodes.UNAUTHORIZED, 'must be an admin');
 			}
-      const userData = await user.findOne({
+      		const userData = await user.findOne({
 				where: {
 					id: req.params.id,
 				},
@@ -110,7 +110,7 @@ class UserController {
 					id: req.params.id,
 				}
 			});
-      res.status(200).json({
+      		res.status(StatusCodes.OK).json({
 				msg: 'Success',
 			});
 		} catch (err) {
@@ -120,7 +120,7 @@ class UserController {
 	static async changePassword(req, res, next) {
 		try {
 			const { oldPassword, newPassword } = req.body;
-      const userData = await user.findOne({
+      		const userData = await user.findOne({
 				where: {
 					id: req.UserData.id,
 				},
@@ -136,7 +136,7 @@ class UserController {
 					id: req.UserData.id,
 				}
 			});
-      res.status(200).json({
+      		res.status(StatusCodes.OK).json({
 				msg: 'Success',
 			});
 		} catch (err) {
@@ -145,7 +145,7 @@ class UserController {
 	}
 	static async resetPassword(req, res, next) {
 		try {
-      const userData = await user.findOne({
+      		const userData = await user.findOne({
 				where: {
 					id: req.UserData.id,
 				},
@@ -160,7 +160,7 @@ class UserController {
 					id: req.UserData.id,
 				}
 			});
-      res.status(200).json({
+      		res.status(StatusCodes.OK).json({
 				msg: 'Success',
 			});
 		} catch (err) {

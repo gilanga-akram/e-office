@@ -18,7 +18,12 @@ module.exports = (sequelize, DataTypes) => {
     no_surat: DataTypes.STRING,
     asal_surat: DataTypes.STRING,
     tgl_surat: DataTypes.DATE,
-    isi: DataTypes.TEXT
+    isi: DataTypes.TEXT,
+    status: DataTypes.STRING,
+    tipe: DataTypes.STRING, // surat cuti, surat masuk, surat keluar
+    jenis: DataTypes.STRING, // internal, external
+    tujuan: DataTypes.STRING,
+    waktu_pengiriman: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'surat',
